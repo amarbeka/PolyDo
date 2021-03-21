@@ -30,14 +30,4 @@ class ChangePasswordRequest extends FormRequest
             'new_confirm_password' => ['same:new_password'],
         ];
     }
-    public function messages() {
-        return [
-        
-            'current_password.required'      => trans( 'validation.required', [ 'attribute' => trans( 'labels.current_password') ] ),
-            'new_password.required'      => trans( 'validation.required', [ 'attribute' => trans( 'labels.new_password') ] ),
-
- 
-          
-        ];
-    }
 }
