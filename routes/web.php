@@ -17,6 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+require app_path( 'Http/Routes/LoginSocialRoutes.php');
 Auth::routes();
 Route::group( [ 'middleware' => 'auth' ], function () {
     require app_path( 'Http/Routes/DashboardRoutes.php');

@@ -1,12 +1,12 @@
 <?php
-
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\PermissionRequest;
+use App\Http\Resources\PermissionResource;
 use App\Traits\PermissionTrait;
 use App\Models\Permission;
 
@@ -21,22 +21,10 @@ class PermissionController extends Controller
     public function index()
     {
       abort_if(Gate::denies('Permission_Access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-       $permissions = Permission::latest()->paginate(12);
-       return view('permission.index',compact('permissions'));
+      return new PermissionResource(Permission::get());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-      abort_if(Gate::denies('Permission_Created'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $filename = trans('general.create');
-        $breadcrumps = [['name' => trans('general.permissions')],[ 'name' => trans('general.create')]];
-       return view('permission.create',compact('filename','breadcrumps'));
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -48,10 +36,7 @@ class PermissionController extends Controller
     {
       abort_if(Gate::denies('Permission_Created'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $this->insertNewPermission($request);
-        return redirect()->route('permissions.index')->with( [
-            'message'    => 'Create Permission',
-            'success' => 'success',
-        ] );
+        return response(Response::HTTP_CREATED);
     }
 
     /**
@@ -62,22 +47,11 @@ class PermissionController extends Controller
      */
     public function show($id)
     {
-        return back();
+       $Permission = Permission::findorFail($id);
+       return new PermissionResource($Permission);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-      abort_if(Gate::denies('Permission_Updated'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $permission = Permission::findorFail($id);
-       return view('permission.edit',compact('permission'));
-    }
-
+    
     /**
      * Update the specified resource in storage.
      *
@@ -89,10 +63,7 @@ class PermissionController extends Controller
     {
      abort_if(Gate::denies('Permission_Updated'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $this->updatedPermission($request,$id);
-        return redirect()->route('permissions.index')->with( [
-            'message'    => 'Permission Update',
-            'success' => 'success',
-        ] );
+        return response(Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -105,9 +76,6 @@ class PermissionController extends Controller
     {
       abort_if(Gate::denies('Permission_Deleted'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $this->deletePermission($id);
-        return redirect()->back()->with( [
-            'message'    => 'Permission Deleted',
-            'success' => 'success',
-        ] ); 
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }

@@ -64,40 +64,55 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-               
+             
              
                   <div class="row">
-                  <div class="col-md-3">
-                    <div class="card-counter primary">
-                      <i class="fa fa-code-fork"></i>
-                      <span class="count-numbers">{{ App\Models\User::count() }}</span>
-                      <span class="count-name">User</span>
+                    @can('Task_Access')
+                    <div class="col-md-3">
+                      <div class="card-counter primary">
+                        <i class="fa fa-code-fork"></i>
+                        <span class="count-numbers">{{ App\Models\User::count() }}</span>
+                        <span class="count-name">User</span>
+                      </div>
                     </div>
-                  </div>
-              
-                  <div class="col-md-3">
-                    <div class="card-counter danger">
-                      <i class="fa fa-ticket"></i>
-                      <span class="count-numbers">{{ App\Models\Role::count() }}</span>
-                      <span class="count-name">Role</span>
+                
+                    <div class="col-md-3">
+                      <div class="card-counter danger">
+                        <i class="fa fa-ticket"></i>
+                        <span class="count-numbers">{{ App\Models\Role::count() }}</span>
+                        <span class="count-name">Role</span>
+                      </div>
                     </div>
-                  </div>
-              
-                  <div class="col-md-3">
-                    <div class="card-counter success">
-                      <i class="fa fa-database"></i>
-                      <span class="count-numbers">{{ App\Models\Project::whereNotNull('finish_at')->count() }}</span>
-                      <span class="count-name">Project Completed</span>
+                
+                    <div class="col-md-3">
+                      <div class="card-counter success">
+                        <i class="fa fa-database"></i>
+                        <span class="count-numbers">{{ App\Models\Project::whereNotNull('finish_at')->count() }}</span>
+                        <span class="count-name">Project Completed</span>
+                      </div>
                     </div>
-                  </div>
-              
-                  <div class="col-md-3">
-                    <div class="card-counter info">
-                      <i class="fa fa-users"></i>
-                      <span class="count-numbers">{{ App\Models\Task::whereNotNull('finish_at')->count() }}</span>
-                      <span class="count-name">Task Completed</span>
+                
+                    <div class="col-md-3">
+                      <div class="card-counter info">
+                        <i class="fa fa-users"></i>
+                        <span class="count-numbers">{{ App\Models\Task::whereNotNull('finish_at')->count() }}</span>
+                        <span class="count-name">Task Completed</span>
+                      </div>
                     </div>
-                  </div>
+                    @else
+                    <div class="col-md-12">
+                    
+                      <div class="card-header"><h3 class="text-center">{{ __('PolyDo App') }}</h3></div>
+                      <div class="card-body">
+                        <img class="rounded mx-auto d-block"  src="{{ asset('images/polydo.png') }}" alt="">
+                     </div>
+                     <button type="button" class="btn btn-secondary btn-lg btn-block">
+                      Wait For Approved by Super Admin
+                    </button>
+                    </div>
+                    @endcan
+               
+               
                 </div>
             </div>
         </div>

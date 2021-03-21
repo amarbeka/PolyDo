@@ -1,12 +1,12 @@
 <?php
-
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProjectRequest;
+use App\Http\Resources\ProjectResource;
 use App\Traits\ProjectTrait;
 use App\Models\Project;
 
@@ -21,20 +21,10 @@ class ProjectController extends Controller
     public function index()
     {
       abort_if(Gate::denies('Project_Access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-       $projects = Project::latest()->paginate(6);
-       return view('project.index',compact('projects'));
+      return new ProjectResource(Project::with(['tasks'])->get());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-      abort_if(Gate::denies('Project_Created'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-       return view('project.create');
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -46,10 +36,7 @@ class ProjectController extends Controller
     {
       abort_if(Gate::denies('Project_Created'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $this->insertNewProject($request);
-        return redirect()->route('project.index')->with( [
-            'message'    => 'Create Project',
-            'success' => 'success',
-        ] );
+        return response(Response::HTTP_CREATED);
     }
 
     /**
@@ -60,24 +47,11 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-      abort_if(Gate::denies('Project_Access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-      $project = Project::findorFail($id);
-     return view('project.show',compact('project'));
+       $project = Project::findorFail($id);
+       return new ProjectResource($project);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-      abort_if(Gate::denies('Project_Updated'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $project = Project::findorFail($id);
-       return view('project.edit',compact('project'));
-    }
-
+    
     /**
      * Update the specified resource in storage.
      *
@@ -89,10 +63,7 @@ class ProjectController extends Controller
     {
      abort_if(Gate::denies('Project_Updated'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $this->updatedProject($request,$id);
-        return redirect()->route('project.index')->with( [
-            'message'    => 'Project Update',
-            'success' => 'success',
-        ] );
+        return response(Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -101,23 +72,10 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function complete($id)
-    {
-      abort_if(Gate::denies('Project_Completed'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $this->completeProject($id);
-        return redirect()->back()->with( [
-            'message'    => 'Project Completed',
-            'success' => 'success',
-        ] ); 
-    }
-
     public function destroy($id)
     {
       abort_if(Gate::denies('Project_Deleted'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $this->deleteProject($id);
-        return redirect()->back()->with( [
-            'message'    => 'Project Deleted',
-            'success' => 'success',
-        ] ); 
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }
