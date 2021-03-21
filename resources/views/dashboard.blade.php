@@ -67,7 +67,7 @@
              
              
                   <div class="row">
-                    @can('Task_Access')
+                    @can('Project_Access')
                     <div class="col-md-3">
                       <div class="card-counter primary">
                         <i class="fa fa-code-fork"></i>
